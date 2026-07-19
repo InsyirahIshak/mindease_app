@@ -972,7 +972,10 @@ class _PAStudentDetailState extends State<PAStudentDetail> {
                                                 ),
                                               ),
 
-                                            if (liveReferral == null || liveReferral['status'] == 'declined') ...[
+                                            if (liveReferral == null || 
+                                                liveReferral['status'] == 'declined' ||
+                                                (liveReferral['status'] == 'done' && 
+                                                (threshold['label'] == 'Critical' || threshold['label'] == 'Moderate'))) ...[
                                               DropdownButtonFormField<String>(
                                                 isExpanded: true,
                                                 initialValue: _selectedCounsellorId.isEmpty ? null : _selectedCounsellorId,

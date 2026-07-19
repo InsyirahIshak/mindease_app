@@ -177,6 +177,14 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   bool get hasMoodHistory => moodHistory.isNotEmpty;
 
+  // Weekly analysis shows if student has logged at least 1 mood in last 7 days
+  bool get hasWeeklyData {
+    final now = DateTime.now();
+    final last7Dates = List.generate(7, (i) =>
+      now.subtract(Duration(days: 6 - i)).toIso8601String().substring(0, 10));
+    return moodHistory.any((m) => last7Dates.contains(m['log_date']));
+  }
+
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     if (!mounted) return;
@@ -464,18 +472,20 @@ class _StudentDashboardState extends State<StudentDashboard> {
                       _buildUpcomingSessionCard(),
                       todayMood == null ? _buildMoodInviteBox() : _buildTodayMoodBox(),
                       const SizedBox(height: 16),
+                      if (counsellorData != null) ...[
+                        _buildCounsellorBox(),
+                        const SizedBox(height: 16),
+                      ],
                       if (hasMoodHistory) ...[
                         _buildMiniMoodChart(),
                         const SizedBox(height: 12),
+                      ],
+                      if (hasWeeklyData) ...[
                         _buildDashboardAnalysisSummary(),
                         const SizedBox(height: 16),
                       ],
                       _buildStressBox(),
                       const SizedBox(height: 16),
-                      if (counsellorData != null) ...[
-                        _buildCounsellorBox(),
-                        const SizedBox(height: 16),
-                      ],
                       const SizedBox(height: 10),
                     ],
                   ),

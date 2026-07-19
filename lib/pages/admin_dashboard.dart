@@ -1186,7 +1186,7 @@ class _RelaxationContentPageState extends State<_RelaxationContentPage> {
                         : Switch(
                             value: _breakMode,
                             onChanged: _toggleBreakMode,
-                            activeColor: const Color(0xFFFFB74D),
+                            activeThumbColor: const Color(0xFFFFB74D),
                           ),
                   ],
                 ),

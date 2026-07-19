@@ -193,8 +193,19 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
     }
   }
 
-  bool get hasWeekData => _allMoods.length >= 7;
-  bool get hasMonthData => _allMoods.length >= 30;
+  bool get hasWeekData {
+    final now = DateTime.now();
+    final last7Dates = List.generate(7, (i) =>
+      now.subtract(Duration(days: 6 - i)).toIso8601String().substring(0, 10));
+    return _allMoods.any((m) => last7Dates.contains(m['log_date']));
+  }
+
+  bool get hasMonthData {
+    final now = DateTime.now();
+    final last30Dates = List.generate(30, (i) =>
+      now.subtract(Duration(days: 29 - i)).toIso8601String().substring(0, 10));
+    return _allMoods.any((m) => last30Dates.contains(m['log_date']));
+  }
 
   // Use saved threshold for display, fallback to live stressLevel
   Map<String, dynamic> get displayLevel {

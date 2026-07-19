@@ -699,105 +699,100 @@ class _CounsellorDashboardState extends State<CounsellorDashboard> {
       context: context,
       builder: (ctx) => Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          insetPadding: EdgeInsets.only(
-            left: 20, right: 20, top: 40,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom > 0
-                ? MediaQuery.of(ctx).viewInsets.bottom
-                : 40,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF3E0),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(Icons.phone_missed, color: Color(0xFFFFB74D), size: 20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF3E0),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Text("Report Unreachable",
-                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    source == 'pa'
-                        ? "Describe what happened. This will be sent to ${student['name']}'s Personal Advisor."
-                        : "Describe what happened. This will be logged for your records only.",
-                    style: TextStyle(fontSize: 12, color: AppTheme.textGrey),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: noteController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: "e.g. Called 3 times, no answer...",
-                      hintStyle: TextStyle(fontSize: 12, color: AppTheme.textGrey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFFFFB74D)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFFFFB74D)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFFFFB74D), width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.all(12),
+                      child: const Icon(Icons.phone_missed, color: Color(0xFFFFB74D), size: 20),
                     ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text("Report Unreachable",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  source == 'pa'
+                      ? "Describe what happened. PA will be notified."
+                      : "Describe what happened. Logged for your records only.",
+                  style: TextStyle(fontSize: 11, color: AppTheme.textGrey),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: noteController,
+                  maxLines: 4,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    hintText: "e.g. Called 3 times, no answer...",
+                    hintStyle: TextStyle(fontSize: 11, color: AppTheme.textGrey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFFFB74D)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFFFB74D)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFFFB74D), width: 2),
+                    ),
+                    contentPadding: const EdgeInsets.all(12),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppTheme.primary),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text("Cancel", style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTheme.primary),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
                         ),
+                        child: const Text("Cancel", style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600, fontSize: 13)),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            final note = noteController.text.trim();
-                            if (note.isEmpty) {
-                              ScaffoldMessenger.of(ctx).showSnackBar(
-                                const SnackBar(content: Text("Please describe the situation")),
-                              );
-                              return;
-                            }
-                            Navigator.pop(ctx);
-                            _reportUnreachable(student, note);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFFB74D),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                          child: const Text("Send Report", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final note = noteController.text.trim();
+                          if (note.isEmpty) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              const SnackBar(content: Text("Please describe the situation")),
+                            );
+                            return;
+                          }
+                          Navigator.pop(ctx);
+                          _reportUnreachable(student, note);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFB74D),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
+                        child: const Text("Send Report", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -961,119 +956,114 @@ class _CounsellorDashboardState extends State<CounsellorDashboard> {
       context: context,
       builder: (ctx) => Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          insetPadding: EdgeInsets.only(
-            left: 20, right: 20, top: 40,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom > 0
-                ? MediaQuery.of(ctx).viewInsets.bottom
-                : 40,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primarySoft,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.check_circle_outline, color: AppTheme.primary, size: 20),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text("Mark as Done",
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "Mark ${student['name']}'s session as done.",
+                  style: const TextStyle(fontSize: 11),
+                ),
+                const SizedBox(height: 6),
+                if (source == 'pa') ...[
+                  Text(
+                    "Leave a note for the PA.",
+                    style: TextStyle(fontSize: 11, color: AppTheme.textGrey, fontStyle: FontStyle.italic),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: commentController,
+                    maxLines: 4,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    decoration: InputDecoration(
+                      hintText: "e.g. Student showed improvement...",
+                      hintStyle: TextStyle(fontSize: 11, color: AppTheme.textGrey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.primary),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: AppTheme.primary.withOpacity(0.5)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.primary, width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.all(12),
+                    ),
+                  ),
+                ] else
+                  Text(
+                    "No PA note needed for student-initiated request.",
+                    style: TextStyle(fontSize: 11, color: AppTheme.textGrey, fontStyle: FontStyle.italic),
+                  ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTheme.primary),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        child: const Text("Cancel", style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600, fontSize: 12)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: AppTheme.primarySoft,
+                          gradient: AppTheme.buttonGradient,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.check_circle_outline, color: AppTheme.primary, size: 20),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text("Mark as Done",
-                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    "Mark ${student['name']}'s session as done. This will remove them from your active student list.",
-                    style: const TextStyle(fontSize: 13),
-                  ),
-                  const SizedBox(height: 14),
-                  if (source == 'pa') ...[
-                    Text(
-                      "Leave a short note for the Personal Advisor. The student will not see this note.",
-                      style: TextStyle(fontSize: 12, color: AppTheme.textGrey, fontStyle: FontStyle.italic),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: commentController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: "e.g. Student showed improvement, recommend continued monitoring...",
-                        hintStyle: TextStyle(fontSize: 12, color: AppTheme.textGrey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppTheme.primary),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppTheme.primary.withOpacity(0.5)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppTheme.primary, width: 2),
-                        ),
-                        contentPadding: const EdgeInsets.all(12),
-                      ),
-                    ),
-                  ] else
-                    Text(
-                      "This was a student-initiated request, so no Personal Advisor note is needed.",
-                      style: TextStyle(fontSize: 12, color: AppTheme.textGrey, fontStyle: FontStyle.italic),
-                    ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppTheme.primary),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final comment = commentController.text.trim();
+                            if (source == 'pa' && comment.isEmpty) {
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                const SnackBar(content: Text("Please leave a note for the PA before confirming")),
+                              );
+                              return;
+                            }
+                            Navigator.pop(ctx);
+                            _markAsDone(student, comment);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text("Cancel", style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600)),
+                          child: const Text("Confirm", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: AppTheme.buttonGradient,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              final comment = commentController.text.trim();
-                              if (source == 'pa' && comment.isEmpty) {
-                                ScaffoldMessenger.of(ctx).showSnackBar(
-                                  const SnackBar(content: Text("Please leave a note for the PA before confirming")),
-                                );
-                                return;
-                              }
-                              Navigator.pop(ctx);
-                              _markAsDone(student, comment);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
-                            child: const Text("Confirm", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -1089,104 +1079,99 @@ class _CounsellorDashboardState extends State<CounsellorDashboard> {
       context: context,
       builder: (ctx) => Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          insetPadding: EdgeInsets.only(
-            left: 20, right: 20, top: 40,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom > 0
-                ? MediaQuery.of(ctx).viewInsets.bottom
-                : 40,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3E5F5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(Icons.edit_note, color: Color(0xFF7B1FA2), size: 20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF3E5F5),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Text("Write Progress Report",
-                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    "Write an observation or progress note for ${student['name']}. "
-                    "This report will be ${source == 'pa' ? 'sent to the Personal Advisor.' : 'logged for your records.'}",
-                    style: TextStyle(fontSize: 12, color: AppTheme.textGrey),
-                  ),
-                  const SizedBox(height: 14),
-                  TextField(
-                    controller: reportController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: "e.g. Student appeared more relaxed. Showed progress in managing anxiety...",
-                      hintStyle: TextStyle(fontSize: 12, color: AppTheme.textGrey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF7B1FA2)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: const Color(0xFF7B1FA2).withOpacity(0.5)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF7B1FA2), width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.all(12),
+                      child: const Icon(Icons.edit_note, color: Color(0xFF7B1FA2), size: 20),
                     ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text("Write Progress Report",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Write an observation for ${student['name']}. "
+                  "${source == 'pa' ? 'PA will be notified.' : 'Logged for your records.'}",
+                  style: TextStyle(fontSize: 11, color: AppTheme.textGrey),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: reportController,
+                  maxLines: 4,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    hintText: "e.g. Student showed progress...",
+                    hintStyle: TextStyle(fontSize: 11, color: AppTheme.textGrey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF7B1FA2)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: const Color(0xFF7B1FA2).withOpacity(0.5)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF7B1FA2), width: 2),
+                    ),
+                    contentPadding: const EdgeInsets.all(12),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppTheme.primary),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text("Cancel", style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTheme.primary),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
                         ),
+                        child: const Text("Cancel", style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600, fontSize: 13)),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            final report = reportController.text.trim();
-                            if (report.isEmpty) {
-                              ScaffoldMessenger.of(ctx).showSnackBar(
-                                const SnackBar(content: Text("Please write a progress report before submitting")),
-                              );
-                              return;
-                            }
-                            Navigator.pop(ctx);
-                            _saveProgressReport(student, report);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7B1FA2),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                          child: const Text("Submit Report", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final report = reportController.text.trim();
+                          if (report.isEmpty) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              const SnackBar(content: Text("Please write a progress report before submitting")),
+                            );
+                            return;
+                          }
+                          Navigator.pop(ctx);
+                          _saveProgressReport(student, report);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF7B1FA2),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
+                        child: const Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -1564,8 +1549,8 @@ class _CounsellorDashboardState extends State<CounsellorDashboard> {
             ],
           ),
         ),
-      ),
-       ) // Scaffold
+      ), 
+      )// Scaffold
     ); // PopScope
   }
 
@@ -1847,6 +1832,7 @@ class _CounsellorDashboardState extends State<CounsellorDashboard> {
                   ],
                 ),
                 const SizedBox(height: 8),
+                if (s['source'] == 'pa')
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -1862,6 +1848,7 @@ class _CounsellorDashboardState extends State<CounsellorDashboard> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                if (s['source'] == 'pa')
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
