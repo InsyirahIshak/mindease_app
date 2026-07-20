@@ -19,6 +19,12 @@ class NotificationService {
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(_appId);
     await OneSignal.Notifications.requestPermission(true);
+
+    // ── Show notifications even when app is in foreground ──
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      event.notification.display();
+    });
+
     await savePlayerIdToFirestore();
     _setupClickListener();
   }

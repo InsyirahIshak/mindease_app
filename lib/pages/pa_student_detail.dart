@@ -46,10 +46,16 @@ class _PAStudentDetailState extends State<PAStudentDetail> {
 
   List<Map<String, dynamic>> get filteredMoodData {
     if (_filter == '7') {
-      return allMoodData.length > 7 ? allMoodData.sublist(allMoodData.length - 7) : allMoodData;
+      final now = DateTime.now();
+      final last7Dates = List.generate(7, (i) =>
+        now.subtract(Duration(days: 6 - i)).toIso8601String().substring(0, 10));
+      return allMoodData.where((m) => last7Dates.contains(m['log_date'])).toList();
     }
     if (_filter == '30') {
-      return allMoodData.length > 30 ? allMoodData.sublist(allMoodData.length - 30) : allMoodData;
+      final now = DateTime.now();
+      final last30Dates = List.generate(30, (i) =>
+        now.subtract(Duration(days: 29 - i)).toIso8601String().substring(0, 10));
+      return allMoodData.where((m) => last30Dates.contains(m['log_date'])).toList();
     }
     return allMoodData;
   }
@@ -674,7 +680,7 @@ class _PAStudentDetailState extends State<PAStudentDetail> {
                                               ]),
                                             ),
                                             const SizedBox(height: 12),
-                                            Text("${filteredMoodData.length} mood entries logged",
+                                            Text("${filteredMoodData.where((d) => d['mood_level'] != null).length} mood entries logged",
                                                 style: TextStyle(fontSize: 12, color: AppTheme.textGrey)),
                                             const SizedBox(height: 12),
                                             Builder(builder: (context) {
@@ -806,10 +812,6 @@ class _PAStudentDetailState extends State<PAStudentDetail> {
                                                           ),
                                                         ]),
                                                         const SizedBox(height: 8),
-                                                        Text(
-                                                          "Week: ${liveAnalysis['week']}",
-                                                          style: TextStyle(fontSize: 11, color: AppTheme.textGrey),
-                                                        ),
                                                       ],
                                                     ),
                                                   ),

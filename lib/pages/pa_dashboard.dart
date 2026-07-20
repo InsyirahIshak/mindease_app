@@ -699,7 +699,28 @@ class _PADashboardState extends State<PADashboard> {
 
             final hasMood = s['hasMoodHistory'] as bool;
             final style = hasMood ? thresholdStyle(threshold) : thresholdStyle('new');
-            final liveIsReferred = referralStatus == 'pending' || referralStatus == 'accepted' || referralStatus == 'done';
+
+            // Check if done today
+            String? doneDate;
+            bool isDoneToday = false;
+            if (referralSnapshot.hasData && referralSnapshot.data!.docs.isNotEmpty) {
+              final data = referralSnapshot.data!.docs.first.data() as Map<String, dynamic>;
+              doneDate = data['done_date'] as String?;
+              final today = DateTime.now().toIso8601String().substring(0, 10);
+              isDoneToday = referralStatus == 'done' && doneDate == today;
+            }
+
+            final liveIsReferred = referralStatus == 'pending' || referralStatus == 'accepted' || isDoneToday;
+            final cardBg = isDoneToday
+                ? const Color(0xFFE3F2FD) // blue for done today
+                : liveIsReferred && referralStatus != 'done'
+                    ? AppTheme.primarySoft
+                    : style['bg'];
+            final cardBorder = isDoneToday
+                ? const Color(0xFF64B5F6)
+                : liveIsReferred && referralStatus != 'done'
+                    ? AppTheme.primary.withOpacity(0.3)
+                    : (style['border'] as Color).withOpacity(0.4);
 
             return GestureDetector(
               onTap: () => Navigator.pushNamed(
@@ -711,11 +732,9 @@ class _PADashboardState extends State<PADashboard> {
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: liveIsReferred ? AppTheme.primarySoft : style['bg'],
+                  color: cardBg,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: liveIsReferred ? AppTheme.primary.withOpacity(0.3) : (style['border'] as Color).withOpacity(0.4),
-                  ),
+                  border: Border.all(color: cardBorder),
                 ),
                 child: Row(
                   children: [
@@ -726,7 +745,7 @@ class _PADashboardState extends State<PADashboard> {
                           backgroundColor: Colors.white,
                           child: Text(
                             s['name'].toString().split(' ').map((w) => w[0]).take(2).join(),
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: liveIsReferred ? AppTheme.primary : style['dot']),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDoneToday ? const Color(0xFF1565C0) : liveIsReferred && referralStatus != 'done' ? AppTheme.primary : style['dot']),
                           ),
                         ),
                         if (hasMood)
@@ -760,7 +779,7 @@ class _PADashboardState extends State<PADashboard> {
                                   ? "✓ Counsellor accepted"
                                   : referralStatus == 'pending'
                                       ? "⏳ Pending counsellor"
-                                      : referralStatus == 'done'
+                                      : isDoneToday
                                           ? "✅ Session completed"
                                           : "",
                               style: TextStyle(
@@ -768,8 +787,8 @@ class _PADashboardState extends State<PADashboard> {
                                 fontWeight: FontWeight.w600,
                                 color: referralStatus == 'accepted'
                                     ? AppTheme.secondary
-                                    : referralStatus == 'done'
-                                        ? AppTheme.primary
+                                    : isDoneToday
+                                        ? const Color(0xFF1565C0)
                                         : const Color(0xFFFFB74D),
                               ),
                             ),

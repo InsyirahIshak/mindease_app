@@ -38,11 +38,22 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
           .limit(1)
           .get();
       if (studentQuery.docs.isEmpty) return;
-      final data = studentQuery.docs.first.data();
-      final threshold = data['threshold'] as String?;
-      print("DEBUG: Student threshold from document = $threshold");
-      if (threshold != null) {
-        setState(() => _savedThreshold = threshold);
+      final studId = studentQuery.docs.first.id;
+
+      // Load from moodAnalysis — only exists after Railway aggregation
+      final analysisQuery = await FirebaseFirestore.instance
+          .collection('moodAnalysis')
+          .where('stud_id', isEqualTo: studId)
+          .where('type', isEqualTo: 'weekly')
+          .orderBy('analysis_date', descending: true)
+          .limit(1)
+          .get();
+
+      if (analysisQuery.docs.isNotEmpty) {
+        final threshold = analysisQuery.docs.first.data()['risk_level'] as String?;
+        if (threshold != null) {
+          setState(() => _savedThreshold = threshold);
+        }
       }
     } catch (e) {
       print("Error loading threshold: $e");
@@ -104,22 +115,36 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
     return result;
   }
 
-  // Always show last 7 days ending today
+  // New student (< 7 days) → start from first log date
+  // Existing student (7+ days) → show last 7 days ending today
   List<Map<String, dynamic>> _buildWeekRange() {
     final now = DateTime.now();
     final moodMap = <String, int>{};
     for (final m in _allMoods) {
       moodMap[m['log_date'] as String] = m['mood_level'] as int;
     }
+
+    DateTime startDate;
+    if (_allMoods.isEmpty) {
+      startDate = now.subtract(const Duration(days: 6));
+    } else {
+      final firstLog = DateTime.parse(_allMoods.first['log_date'] as String);
+      final daysPassed = now.difference(firstLog).inDays;
+      if (daysPassed < 7) {
+        startDate = firstLog;
+      } else {
+        startDate = now.subtract(const Duration(days: 6));
+      }
+    }
+
     final result = <Map<String, dynamic>>[];
-    for (int i = 6; i >= 0; i--) {
-      final date = now.subtract(Duration(days: i));
+    for (int i = 0; i < 7; i++) {
+      final date = startDate.add(Duration(days: i));
       final dateStr = date.toIso8601String().substring(0, 10);
       result.add({'date': dateStr, 'mood_level': moodMap[dateStr]});
     }
     return result;
   }
-
   List<Map<String, dynamic>> get chartData {
     if (_filter == '7') return _buildWeekRange(); // Mon–Sun of current week
     if (_filter == '30') return _buildDateRange(30);
@@ -144,24 +169,28 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
   }
 
   double get average {
-    if (filteredData.isEmpty) return 0;
-    return filteredData.fold(0.0, (s, m) => s + (m['mood_level'] as int)) / filteredData.length;
+    final valid = filteredData.where((m) => m['mood_level'] != null).toList();
+    if (valid.isEmpty) return 0;
+    return valid.fold(0.0, (s, m) => s + (m['mood_level'] as int)) / valid.length;
   }
 
   int get minMood {
-    if (filteredData.isEmpty) return 0;
-    return filteredData.map((m) => m['mood_level'] as int).reduce((a, b) => a < b ? a : b);
+    final valid = filteredData.where((m) => m['mood_level'] != null).toList();
+    if (valid.isEmpty) return 0;
+    return valid.map((m) => m['mood_level'] as int).reduce((a, b) => a < b ? a : b);
   }
 
   int get maxMood {
-    if (filteredData.isEmpty) return 0;
-    return filteredData.map((m) => m['mood_level'] as int).reduce((a, b) => a > b ? a : b);
+    final valid = filteredData.where((m) => m['mood_level'] != null).toList();
+    if (valid.isEmpty) return 0;
+    return valid.map((m) => m['mood_level'] as int).reduce((a, b) => a > b ? a : b);
   }
 
   int get mostFrequentMood {
-    if (filteredData.isEmpty) return 0;
+    final valid = filteredData.where((m) => m['mood_level'] != null).toList();
+    if (valid.isEmpty) return 0;
     final freq = <int, int>{};
-    for (final m in filteredData) {
+    for (final m in valid) {
       final v = m['mood_level'] as int;
       freq[v] = (freq[v] ?? 0) + 1;
     }
@@ -193,21 +222,8 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
     }
   }
 
-  bool get hasWeekData {
-    final now = DateTime.now();
-    final last7Dates = List.generate(7, (i) =>
-      now.subtract(Duration(days: 6 - i)).toIso8601String().substring(0, 10));
-    return _allMoods.any((m) => last7Dates.contains(m['log_date']));
-  }
-
-  bool get hasMonthData {
-    final now = DateTime.now();
-    final last30Dates = List.generate(30, (i) =>
-      now.subtract(Duration(days: 29 - i)).toIso8601String().substring(0, 10));
-    return _allMoods.any((m) => last30Dates.contains(m['log_date']));
-  }
-
   // Use saved threshold for display, fallback to live stressLevel
+  // Returns 'none' map if less than 7 days
   Map<String, dynamic> get displayLevel {
     final t = effectiveThreshold;
     if (t == 'Critical') {
@@ -234,11 +250,30 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
     }
   }
 
+  // Only show week data if 7 days have passed since first log
+  bool get hasWeekData {
+    if (_allMoods.isEmpty) return false;
+    final firstLog = DateTime.parse(_allMoods.first['log_date'] as String);
+    final daysPassed = DateTime.now().difference(firstLog).inDays;
+    return daysPassed >= 7;
+  }
+
+  bool get hasMonthData {
+    if (_allMoods.isEmpty) return false;
+    final firstLog = DateTime.parse(_allMoods.first['log_date'] as String);
+    final daysPassed = DateTime.now().difference(firstLog).inDays;
+    return daysPassed >= 30;
+  }
+
   // Use saved threshold from moodAnalysis, fallback to live calculation
+  // Only return 'none' if student has never had 7 days of logging
   String get effectiveThreshold {
+    if (_allMoods.isEmpty) return 'none';
+    final firstLog = DateTime.parse(_allMoods.first['log_date'] as String);
+    final daysPassed = DateTime.now().difference(firstLog).inDays;
+    if (daysPassed < 7) return 'none';
     if (_savedThreshold != null) return _savedThreshold!;
-    if (_allMoods.isEmpty) return 'Normal';
-    return displayLevel['label'] as String;
+    return 'none'; // no aggregation yet
   }
 
   bool get isModeratOrCritical =>
@@ -335,7 +370,7 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
                             children: [
                               Text("MOOD TREND",
                                   style: TextStyle(fontSize: 11, letterSpacing: 1, color: AppTheme.textGrey, fontWeight: FontWeight.w600)),
-                              if (filteredData.isNotEmpty)
+                              if (filteredData.isNotEmpty && _savedThreshold != null)
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
@@ -355,7 +390,7 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
                             ],
                           ),
                           const SizedBox(height: 4),
-                          Text("${filteredData.length} entries logged",
+                          Text("${filteredData.where((d) => d['mood_level'] != null).length} entries logged",
                               style: TextStyle(fontSize: 12, color: AppTheme.textGrey)),
                           const SizedBox(height: 20),
                           _allMoods.isNotEmpty ? _buildLineChart() : Container(
@@ -381,7 +416,7 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
                       const SizedBox(height: 16),
                     ],
 
-                    if (hasWeekData) ...[
+                    if (_savedThreshold != null) ...[
                       _buildAnalysisCard(),
                       const SizedBox(height: 16),
                     ],
@@ -391,8 +426,10 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
                       const SizedBox(height: 16),
                     ],
 
-                    // ── Relaxation Corner always visible for ALL students ──
-                    _buildRelaxationCorner(),
+                    // ── Relaxation Corner — only after first weekly aggregation ──
+                    if (_savedThreshold != null) ...[
+                      _buildRelaxationCorner(),
+                    ],
 
                     if (_allMoods.isEmpty)
                       Container(
@@ -514,6 +551,7 @@ class _MoodTrackingPageState extends State<MoodTrackingPage> {
   }
 
   Widget _buildAggregationSummary() {
+    if (filteredData.isEmpty) return const SizedBox();
     final minM = moodById(minMood);
     final maxM = moodById(maxMood);
     final freqM = moodById(mostFrequentMood);

@@ -154,7 +154,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     }
   }
 
-  // ── Build last 7 days ending today for mini chart ──
+  // ── Build chart data ──
+  // New student (< 7 days) → start from first log date
+  // Existing student (7+ days) → show last 7 days ending today
   List<Map<String, dynamic>> get chartData {
     final now = DateTime.now();
     final moodMap = <String, int>{};
@@ -162,10 +164,22 @@ class _StudentDashboardState extends State<StudentDashboard> {
       moodMap[m['log_date'] as String] = m['mood_level'] as int;
     }
 
-    // Always show last 7 days ending today
+    DateTime startDate;
+    if (moodHistory.isEmpty) {
+      startDate = now.subtract(const Duration(days: 6));
+    } else {
+      final firstLog = DateTime.parse(moodHistory.first['log_date'] as String);
+      final daysPassed = now.difference(firstLog).inDays;
+      if (daysPassed < 7) {
+        startDate = firstLog; // start from first log
+      } else {
+        startDate = now.subtract(const Duration(days: 6)); // last 7 days
+      }
+    }
+
     final result = <Map<String, dynamic>>[];
-    for (int i = 6; i >= 0; i--) {
-      final date = now.subtract(Duration(days: i));
+    for (int i = 0; i < 7; i++) {
+      final date = startDate.add(Duration(days: i));
       final dateStr = date.toIso8601String().substring(0, 10);
       result.add({
         'date': dateStr,
@@ -177,12 +191,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   bool get hasMoodHistory => moodHistory.isNotEmpty;
 
-  // Weekly analysis shows if student has logged at least 1 mood in last 7 days
+  // Weekly analysis shows only if 7 days have passed since first log
   bool get hasWeeklyData {
-    final now = DateTime.now();
-    final last7Dates = List.generate(7, (i) =>
-      now.subtract(Duration(days: 6 - i)).toIso8601String().substring(0, 10));
-    return moodHistory.any((m) => last7Dates.contains(m['log_date']));
+    if (moodHistory.isEmpty) return false;
+    final firstLog = moodHistory.first['log_date'] as String;
+    final firstDate = DateTime.parse(firstLog);
+    final daysPassed = DateTime.now().difference(firstDate).inDays;
+    return daysPassed >= 7;
   }
 
   Future<void> logout() async {
@@ -828,6 +843,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   Widget _buildDashboardAnalysisSummary() {
     if (_studId == null) return const SizedBox();
+    if (!hasWeeklyData) return const SizedBox(); // Don't show if less than 7 days
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('moodAnalysis')
@@ -842,33 +858,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
           final data = snapshot.data!.docs.first.data() as Map<String, dynamic>;
           threshold = data['risk_level'] as String?;
         }
-        if (threshold == null) {
-          return Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
-            ),
-            child: Row(
-              children: [
-                const Text("📊", style: TextStyle(fontSize: 24)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Weekly Analysis",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textDark)),
-                      Text("Log mood for 7 days to get your analysis",
-                          style: TextStyle(fontSize: 11, color: AppTheme.textGrey)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
+        if (threshold == null) return const SizedBox();
         Color thresholdColor() {
           switch (threshold) {
             case 'Normal': return const Color(0xFF4DB6AC);
