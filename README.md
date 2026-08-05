@@ -8,12 +8,17 @@ MindEase helps identify students at risk of emotional distress through structure
 
 ## ✨ Key Features
 
-- **Multi-role dashboards** — separate interfaces for Student, Personal Advisor, Counsellor, and Admin
-- **Risk classification system** — threshold-based reclassification to flag students needing attention
-- **Real-time notifications** — push alerts via OneSignal for timely follow-ups
-- **Secure authentication** — Firebase Auth with App Check and device fingerprint verification
-- **Progress tracking** — students can log and submit progress reports
-- **Responsive UI** — tested and optimized across multiple Android devices
+- **Multi-role dashboards** — separate interfaces for Student, Personal Advisor, Counsellor and Admin with role-based access control
+- **Daily mood logging** — students log their emotional state daily using a 5-level emoji scale
+- **DASS-21 stress self-assessment** — standardised psychometric tool measuring depression, anxiety and stress severity
+- **Descriptive analytics** — weekly mood aggregation and threshold-based risk classification into Normal, Moderate or Critical
+- **PA monitoring dashboard** — real-time student monitoring with colour-coded threshold badges for early identification
+- **PA-to-Counsellor referral workflow** — structured in-app referral system for at-risk students
+- **Counsellor session management** — schedule sessions, send reminders, write progress reports and mark sessions as done
+- **Relaxation Corner** — motivational quotes, self-care tips and calming exercises based on risk level
+- **Push notifications** — automated mood reminders via OneSignal and Railway.app scheduled server
+- **Admin controls** — manage users, import student data, manage relaxation content and toggle Break Mode
+- **Secure authentication** — Firebase Authentication with password complexity enforcement and forgot password via email
 
 ## 🛠️ Tech Stack
 
@@ -49,6 +54,12 @@ MindEase helps identify students at risk of emotional distress through structure
 
 <h4>Counsellor Dashboard</h4>
 <img src="assets/screenshots/counsellordashboard.png" width="220"/>
+
+<h4>Push-Notification</h4>
+<img src="assets/screenshots/push-noti.jpg" width="220"/>
+
+<h4>In-app Notification</h4>
+<img src="assets/screenshots/notification.jpg" width="220"/>
 
 <h4>Admin Dashboard</h4>
 <img src="assets/screenshots/admindashboard.png" width="220"/>
