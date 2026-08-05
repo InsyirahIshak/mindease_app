@@ -27,31 +27,31 @@ MindEase helps identify students at risk of emotional distress through structure
 ## 📸 Screenshots
 
 **Login**
-![Login](assets/screenshots/login.png)
+<img src="assets/screenshots/login.png" width="250"/>
 
 **Student Dashboard**
-![Student Dashboard](assets/screenshots/student_dashboard.png)
+<img src="assets/screenshots/student_dashboard.png" width="250"/>
 
 **Logging Mood**
-![Logging Mood](assets/screenshots/logMood.png)
+<img src="assets/screenshots/logMood.png" width="250"/>
 
 **DASS-21 Assessment**
-![DASS-21 Assessment](assets/screenshots/dass.png)
+<img src="assets/screenshots/dass.png" width="250"/>
 
 **Mood Tracking**
-![Mood Tracking](assets/screenshots/moodtracking.png)
+<img src="assets/screenshots/moodtracking.png" width="250"/>
 
 **Mood Tracking (Continuous)**
-![Mood Tracking Continuous](assets/screenshots/moodtrack2.png)
+<img src="assets/screenshots/moodtrack2.png" width="250"/>
 
 **Personal Advisor Dashboard**
-![PA Dashboard](assets/screenshots/padashboard.png)
+<img src="assets/screenshots/padashboard.png" width="250"/>
 
 **Counsellor Dashboard**
-![Counsellor Dashboard](assets/screenshots/counsellordashboard.png)
+<img src="assets/screenshots/counsellordashboard.png" width="250"/>
 
 **Admin Dashboard**
-![Admin Dashboard](assets/screenshots/admindashboard.png)
+<img src="assets/screenshots/admindashboard.png" width="250"/>
 
 ## 🚀 Getting Started
 
