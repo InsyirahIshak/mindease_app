@@ -26,9 +26,32 @@ MindEase helps identify students at risk of emotional distress through structure
 
 ## 📸 Screenshots
 
-| Login | Student Dashboard | Logging Mood | DASS-21 Assessment | Mood Tracking | Mood Tracking (Continuous) | PA Dashboard  | Counsellor Dashboard | Admin Dashboard |
-|-------|-------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|
-| ![Login](assets/screenshots/login.png) | ![Student Dashboard](assets/screenshots/student_dashboard.png) | ![Logging Mood](assets/screenshots/logMood.png) | ![DASS-21 Assessment](assets/screenshots/dass.png) | ![Mood Tracking](assets/screenshots/moodtracking.png) | ![Mood Tracking (Continuous)](assets/screenshots/moodtrack2.png) | ![PA Dashboard](assets/screenshots/padashboard.png) |![Counsellor View](assets/screenshots/counsellordashboard.png) | ![Admin Dashboard](assets/screenshots/admindashboard.png)|
+**Login**
+![Login](assets/screenshots/login.png)
+
+**Student Dashboard**
+![Student Dashboard](assets/screenshots/student_dashboard.png)
+
+**Logging Mood**
+![Logging Mood](assets/screenshots/logMood.png)
+
+**DASS-21 Assessment**
+![DASS-21 Assessment](assets/screenshots/dass.png)
+
+**Mood Tracking**
+![Mood Tracking](assets/screenshots/moodtracking.png)
+
+**Mood Tracking (Continuous)**
+![Mood Tracking Continuous](assets/screenshots/moodtrack2.png)
+
+**Personal Advisor Dashboard**
+![PA Dashboard](assets/screenshots/padashboard.png)
+
+**Counsellor Dashboard**
+![Counsellor Dashboard](assets/screenshots/counsellordashboard.png)
+
+**Admin Dashboard**
+![Admin Dashboard](assets/screenshots/admindashboard.png)
 
 ## 🚀 Getting Started
 
