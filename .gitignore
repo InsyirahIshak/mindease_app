@@ -45,3 +45,4 @@ app.*.map.json
 firebase_options.dart
 .firebaserc
 firebase.json
+.env

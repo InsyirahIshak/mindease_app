@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:mindease_app/theme/app_theme.dart';
 import 'package:mindease_app/services/notification_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 // Pages
@@ -36,6 +37,7 @@ void main() async {
   );
 
   // OneSignal setup
+  await dotenv.load(fileName: ".env");
   OneSignal.initialize("5e7af0b4-b070-4407-9277-5c38afa7738d");
   OneSignal.Notifications.requestPermission(true);
   

@@ -43,6 +43,7 @@ dependencies:
   audioplayers: ^6.1.0
   file_picker: ^8.1.2
   excel: ^4.0.6
+  flutter_dotenv: ^5.1.0
 
   # Notifications
   firebase_messaging: ^16.2.0
@@ -90,6 +91,7 @@ flutter:
   assets:
     - assets/icon/icon.png
     - assets/audio/calm_piano.mp3
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:

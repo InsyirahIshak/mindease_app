@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart' hide Border;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -969,7 +970,7 @@ class _RelaxationContentPageState extends State<_RelaxationContentPage> {
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-              'Basic os_v2_app_lz5pbnfqobcapetxlq4k7j3trx4wm4ed2siuthvr3lxw6cz2q5l3kclxja5hg6ghkoxa4l3dzqnzi7pzm2e5plw66jocn3nblh2y3bq',
+              'Basic ${dotenv.env['ONESIGNAL_REST_API_KEY']}',
         },
         body: jsonEncode({
           'app_id': '5e7af0b4-b070-4407-9277-5c38afa7838d',

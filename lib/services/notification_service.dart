@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class NotificationService {
   static const String _appId = '5e7af0b4-b070-4407-9277-5c38afa7738d';
-  static const String _apiKey =
-      'os_v2_app_lz5pbnfqobcapetxlq4k7j3trx4wm4ed2siuthvr3lxw6cz2q5l3kclxja5hg6ghkoxa4l3dzqnzi7pzm2e5plw66jocn3nblh2y3bq';
+  static String get _apiKey => dotenv.env['ONESIGNAL_REST_API_KEY'] ?? '';
 
   // ── Global navigator key so we can navigate from anywhere, even when
   // the app was opened FROM a notification tap (cold start) ──
